@@ -34,13 +34,16 @@ train_copy$prediction[train_copy$prediction <= 0.5] <- 0
 train_accuracy <- nrow(train_copy[train_copy$Survived == train_copy$prediction,])/nrow(train_copy)
 
 
-# Make copy of g_test and add predictions (rounding to integer values) and get test accuracy
+# Make copy of g_test and add predictions (rounding to integer values) then make csv with just PassengerID and prediction
 
 test_copy <- g_test
-test_copy$prediction <- predict(surv.lm1, newdata = test_copy)
-test_copy$prediction[test_copy$prediction > 0.5] <- 1
-test_copy$prediction[test_copy$prediction <= 0.5] <- 0
+test_copy$Survived <- predict(surv.lm1, newdata = test_copy)
+test_copy$Survived[test_copy$Survived > 0.5] <- 1
+test_copy$Survived[test_copy$Survived <= 0.5] <- 0
 
-test_accuracy <- nrow(test_copy[test_copy$Survived == test_copy$prediction,])/nrow(test_copy)
+test_copy <- test_copy[c("PassengerId", "Survived")]
 
+
+
+write.csv(test_copy, "simple_predict.csv", row.names=FALSE)
 
